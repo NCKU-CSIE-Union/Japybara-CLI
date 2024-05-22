@@ -23,7 +23,104 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
 
-## Structure
+## Latest Structure
+
+```mermaid
+flowchart TD
+%% Nodes
+    CLI("CLI input")
+    Config("J8 Config")
+    Dispatcher("Dispatcher")
+    Dispatcher
+    %% Queue("Task Queue")
+    
+    subgraph OS["OS"]
+        SIGTERM
+        SIGKILL
+        SIGTERM ~~~ SIGKILL
+    end
+
+    subgraph ShareMem["Share Memory"]
+        LockArray["Lock Array"]
+        Iteration
+        Duration
+        Data["Data received"]
+    end
+
+
+    subgraph Executors["`Executors depends on VUs`"]
+        subgraph E1
+            B1["Bucket"]
+        end
+        
+        subgraph E2
+            B2["Bucket"]
+        end
+        
+        subgraph En
+            Bn["Bucket"]
+        end
+        
+        subgraph Executor
+            B["`Token Bucket
+            ( for Rate Limit )`"]
+        end
+    end 
+
+%% E1 Tasks
+    subgraph E1_Task1["Task1"]
+        E1_Request1["Result1"]
+        E1_WriteResult1["Write Result"]
+        E1_Request1 ~~~ E1_WriteResult1
+    end
+    
+    subgraph E1_Task..["Task.."]
+        E1_Request2["Result2"]
+        E1_WriteResult2["Write Result"]
+        E1_Request2 ~~~ E1_WriteResult2
+    end
+
+    subgraph E1_Task..n["Task..n"]
+        E1_Request3["Result3"]
+        E1_WriteResult3["Write Result"]
+        E1_Request3 ~~~ E1_WriteResult3
+    end
+    
+%% Executor Tasks 
+    subgraph Task1
+        Request1["Result1"]
+        WriteResult1["Write Result"]
+        Request1 ~~~ WriteResult1
+    end
+    
+    subgraph Task..
+        Request2["Result2"]
+        WriteResult2["Write Result"]
+        Request2 ~~~ WriteResult2
+    end
+
+    subgraph Task..n
+        Request3["Result3"]
+        WriteResult3["Write Result"]
+        Request3 ~~~ WriteResult3
+    end
+%% Connection
+    CLI --> Config -->Dispatcher
+    Dispatcher -. "`For graceful shutdown`" .-> OS
+    Dispatcher --> E1 & E2 & En & Executor
+%% Executor conn
+    Executor --> Task1 & Task.. & Task..n
+    WriteResult1 & WriteResult2 & WriteResult3--> ShareMem
+%% E1 conn
+    E1 --> E1_Task1 & E1_Task.. & E1_Task..n
+    E1_WriteResult1 & E1_WriteResult2 & E1_WriteResult3--> ShareMem
+
+%% E2 , En
+    E2 & En --"`Manage
+    their own tasks`"--> ShareMem
+``` 
+
+## Original Structure
 
 ```mermaid
 flowchart TD
@@ -55,12 +152,12 @@ flowchart TD
         Bucket
     end
 
-    subgraph Threads["`Thread depends on VUs`"]
-        T1
-        T2
-        T3
-        Tn
-        Thread
+    subgraph Executors["`Executors depends on VUs`"]
+        E1
+        E2
+        E3
+        En
+        Executor
     end 
     
     subgraph Task1
@@ -81,9 +178,9 @@ flowchart TD
 %% Connection
     CLI --> Config -->Dispatcher
     Dispatcher -. "`For graceful shutdown`" .-> OS
-    Dispatcher --> T1 & T2 & T3 & Tn & Thread["(Thread)"]
-    Thread --> Task1
-    Tn --> Task2
+    Dispatcher --> E1 & E2 & E3 & En & Executor
+    Executor --> Task1
+    Executors --> Task2
     WriteResult1 --> ShareMem
     WriteResult2 --> ShareMem
 ```
