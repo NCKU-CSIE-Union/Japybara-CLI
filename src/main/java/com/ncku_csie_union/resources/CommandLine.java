@@ -24,26 +24,32 @@ public class CommandLine implements Runnable, ICommandLine {
 
         @Override
         public void run() {
-            Config config = Config.GetInstance();
             if(YAMLconfigPath.isEmpty()){
-                if (uri == null || uri.isEmpty()) {
+                if (uri == null || uri.isEmpty()) 
                     System.err.println("Error: --uri must be provided when not using a config file.");
-                } else {
-                    config.uri = uri;
-                    config.rate = rate;
-                    config.duration = duration;
-                    config.vu = vu;
-                    config.verbose = verbose;
-                    System.out.println("URI: " + config.uri);
-                    System.out.println("Rate: " + config.rate);
-                    System.out.println("Duration: " + config.duration);
-                    System.out.println("Virtual Users: " + config.vu);
-                    System.out.println("Verbose: " + config.verbose);
-                }
-            } else { // If no YAML file is provided, use the command line arguments
-                System.out.println("Config Path: " + YAMLconfigPath);
-                // TODO : Load YAML file
+                else
+                    UpdateConfig();
+            } else { 
+                // If no YAML file is provided, use the command line arguments
+                LoadYAMLConfig();
             }
+        }
+        private void UpdateConfig(){
+            Config config = Config.GetInstance();
+            config.uri = uri;
+            config.rate = rate;
+            config.duration = duration;
+            config.vu = vu;
+            config.verbose = verbose;
+            System.out.println("URI: " + config.uri);
+            System.out.println("Rate: " + config.rate);
+            System.out.println("Duration: " + config.duration);
+            System.out.println("Virtual Users: " + config.vu);
+            System.out.println("Verbose: " + config.verbose);
+        }
+        private void LoadYAMLConfig(){
+            // TODO : Load YAML file
+            System.out.println("Config Path: " + YAMLconfigPath);
         }
     }
     // Handle Help Mode
@@ -53,7 +59,7 @@ public class CommandLine implements Runnable, ICommandLine {
         public void run() {
             Config config = Config.GetInstance();
             config.help = true;
-            System.out.println(config.help);
+            // TODO : Print help message
         }
     }
 
