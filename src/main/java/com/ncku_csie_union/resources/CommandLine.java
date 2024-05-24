@@ -15,11 +15,15 @@ public class CommandLine implements Runnable, ICommandLine{
     @Option(names = "--verbose"                        )    private boolean verbose;
     @Parameters(index = "0", arity = "0..1" )               private String configPath;
 
+    public CommandLine() {
+        int exitCode = new picocli.CommandLine(new CommandLine()).execute(args);
+        System.exit(exitCode);
+    }
     public Config Parse(String[] args){
         Config config = Config.GetInstance();
         return config;
     }
-    
+
     @Override
     public void run() {
         System.out.println("URI: " + uri);
@@ -33,4 +37,5 @@ public class CommandLine implements Runnable, ICommandLine{
         // TODO Auto-generated method stub
         // throw new UnsupportedOperationException("Unimplemented method 'run'");
     }
+
 }
