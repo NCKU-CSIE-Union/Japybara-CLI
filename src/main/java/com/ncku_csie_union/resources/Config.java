@@ -2,7 +2,7 @@ package com.ncku_csie_union.resources;
 
 public class Config {
     public String uri = "";
-    public Integer rate = 0;
+    public Integer rate = 100;
     
     private static Config instance;
     private Config(){}
