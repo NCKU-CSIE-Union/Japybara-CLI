@@ -7,9 +7,13 @@ public class Config {
     private static Config instance;
     private Config(){}
 
-    public static synchronized Config GetInstance() {
+    public static Config GetInstance() {
         if (instance == null) {
-            instance = new Config();
+            synchronized (Config.class) {
+                if (instance == null) {
+                    instance = new Config();
+                }
+            }
         }
         return instance;
     }
