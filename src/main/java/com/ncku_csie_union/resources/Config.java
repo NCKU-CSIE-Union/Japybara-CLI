@@ -7,7 +7,6 @@ public class Config {
     public Integer vu = 500;
     public boolean verbose = false;
     public boolean help = false;
-    public String configPath = "";
     
     private static Config instance;
     private Config(){}
