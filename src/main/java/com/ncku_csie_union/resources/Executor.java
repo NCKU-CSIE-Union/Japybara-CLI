@@ -9,26 +9,28 @@ import com.ncku_csie_union.resources.RateLimit;
 import com.ncku_csie_union.resources.interfaces.IExecutor;
 
 public class Executor extends Base implements IExecutor {
-    private Integer VUs;
+    private Integer rate;
     private String name;
+    private String logPrefix;
     private Boolean stop;
     private RateLimit rateLimit;
     public static Integer ExecutorCount = 0;
     
 
-    public Executor(Integer VUserCount) {
+    public Executor(Integer rate) {
         this.logger.Log("[Executor] Constructor called");
-        this.VUs = VUserCount;
+        this.rate = rate;
         this.name = "Executor-" + ExecutorCount++;
+        this.logPrefix = "[" + name + "]";
         this.stop = false;
-        this.rateLimit = new RateLimit(config.rate,config.rate);
-        this.logger.Log("[Executor] VUs: " + this.VUs);
+        this.rateLimit = new RateLimit(this.rate,this.rate);
+        this.logger.Log("[Executor] VUs: " + this.rate);
     }
     public void Init() {
-        this.logger.Log("[Executor] Init called");
+        this.logger.Log(logPrefix + "Init called");
     }
     public void Execute() {
-        this.logger.Log("[Executor:Execute] called");
+        this.logger.Log(logPrefix + "Execute called");
         Runnable mockTask = () -> { 
             System.out.println("=========== Running VT:" + Thread.currentThread().getName() + " Start ===========");
             System.out.println("[x] " + Thread.currentThread() + "...");
@@ -50,11 +52,11 @@ public class Executor extends Base implements IExecutor {
         finally {
             System.out.println("ExecutorService is shutdown");
         }
-        this.logger.Log("[Executor:Execute] end");
+        this.logger.Log(logPrefix + "Execute end");
     }
     public void Stop() {
-        this.logger.Log("[Executor:Stop] called");
+        this.logger.Log(logPrefix + "Stop called");
         this.stop = true;
-        this.logger.Log("[Executor:Stop] end");
+        this.logger.Log(logPrefix + "Stop end");
     }
 }
