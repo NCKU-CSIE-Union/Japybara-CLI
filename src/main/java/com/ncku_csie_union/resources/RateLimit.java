@@ -9,6 +9,7 @@ import com.ncku_csie_union.resources.interfaces.IRateLimit;
 public class RateLimit implements IRateLimit {
     private final int maxTokens;
     private final int refillRate;
+    private final int timeUnit = 1000; // 1 second
     private int tokens;
     private long lastRefillTimestamp;
 
@@ -30,8 +31,8 @@ public class RateLimit implements IRateLimit {
         long now = System.currentTimeMillis();
         long durationSinceLastRefill = now - lastRefillTimestamp;
 
-        if (durationSinceLastRefill > 1000) { // refill rate is per second
-            int tokensToAdd = (int) (durationSinceLastRefill / 1000 * refillRate);
+        if (durationSinceLastRefill > timeUnit) { // refill rate is per second
+            int tokensToAdd = (int) (durationSinceLastRefill / timeUnit * refillRate);
             tokens = Math.min(tokens + tokensToAdd, maxTokens);
             lastRefillTimestamp = now;
         }
@@ -45,7 +46,7 @@ public class RateLimit implements IRateLimit {
                 return;
             }
             try {
-                Thread.sleep(1000 / refillRate);
+                Thread.sleep(this.timeUnit / refillRate);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
