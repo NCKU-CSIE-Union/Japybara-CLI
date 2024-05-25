@@ -72,7 +72,10 @@ public class CommandLine implements Runnable, ICommandLine {
             .addSubcommand("run", new RunCommand())
             .addSubcommand("help", new HelpCommand())
             .execute(args);
-        System.exit(exitCode);
+        System.out.println("Exit Code: " + exitCode);
+        if (exitCode != 0) {
+            System.exit(exitCode);
+        }
     }
 
 }

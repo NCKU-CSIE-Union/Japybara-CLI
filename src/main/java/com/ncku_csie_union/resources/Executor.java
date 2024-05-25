@@ -26,7 +26,7 @@ public class Executor extends Base implements IExecutor {
         this.logger.Log(logPrefix + "Constructor called");
         this.rate = rate;
         this.stop = false;
-        this.rateLimit = new RateLimit((int)((float)this.rate),this.rate);
+        this.rateLimit = new RateLimit((int)((float)this.rate * 1.3),this.rate);
         this.executor = Executors.newVirtualThreadPerTaskExecutor();
         this.logger.Log(logPrefix + "Rate: " + rate);
     }

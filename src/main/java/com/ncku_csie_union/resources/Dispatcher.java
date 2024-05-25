@@ -8,23 +8,19 @@ import com.ncku_csie_union.resources.interfaces.IDispatcher;
 public class Dispatcher extends Base implements IDispatcher {
     private String logPrefix = "[Dispatcher]";
     private Executor[] executors;
-    private Integer sharding;
+    private Integer vus;
     private ExecutorService executorService;
-
-    private Integer getSharding(){
-        return 300;
-    }
 
     public Dispatcher() {
         logger.Log(logPrefix + "Constructor called");
-        sharding = getSharding();
-        executors = new Executor[sharding];
+        vus = config.vu;
+        executors = new Executor[vus];
         Integer total_rate = 0;
-        Integer rate = config.rate / sharding;
-        logger.Log(logPrefix + "Sharding: " + sharding);
+        Integer rate = config.rate / vus;
+        logger.Log(logPrefix + "vus: " + vus);
         logger.Log(logPrefix + "Rate: " + rate);
         executorService = Executors.newVirtualThreadPerTaskExecutor();
-        for(int i = 1; i < sharding; i++) {
+        for(int i = 1; i < vus; i++) {
             executors[i] = new Executor(rate, executorService);
             total_rate += rate;
         }
@@ -32,7 +28,7 @@ public class Dispatcher extends Base implements IDispatcher {
     }
     public void Execute() {
         logger.Log(logPrefix + "Execute called");
-        for(int i = 0; i < sharding; i++) {
+        for(int i = 0; i < vus; i++) {
             executors[i].Execute();
         }
         logger.Log(logPrefix + "All executors started");
@@ -40,7 +36,7 @@ public class Dispatcher extends Base implements IDispatcher {
     }
     public void Stop() {
         logger.Log(logPrefix + "Stop called");
-        for(int i = 0; i < sharding; i++) {
+        for(int i = 0; i < vus; i++) {
             executors[i].Stop();
         }
         logger.Log(logPrefix + "Stop end");

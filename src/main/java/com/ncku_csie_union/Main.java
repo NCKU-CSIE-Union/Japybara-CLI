@@ -1,25 +1,26 @@
 package com.ncku_csie_union;
 import com.ncku_csie_union.resources.Executor;
 import com.ncku_csie_union.resources.CommandLine;
+import com.ncku_csie_union.resources.Dispatcher;
 public class Main {
     public static void main(String[] args) throws Exception {
         CommandLine commandLine = new CommandLine();
         commandLine.Parse(args);
         System.out.println("Hello, World!");
 
-        Executor executor = new Executor(2);
+        Dispatcher dispatcher = new Dispatcher();
         Runnable runnable = () -> {
             try {
                 Thread.sleep(5000);
                 System.out.println("Try to stop executor");
-                executor.Stop();
+                dispatcher.Stop();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         };
         Thread.startVirtualThread(runnable);
 
-        executor.Init();
-        executor.Execute();
+        dispatcher.Execute();
+        System.out.println("Main Thread Exit");
     }
 }
