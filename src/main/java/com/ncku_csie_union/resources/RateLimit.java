@@ -6,16 +6,20 @@ import com.ncku_csie_union.resources.interfaces.IRateLimit;
  * Implements a basic rate limiting using the token bucket algorithm.
  * Reference: https://github.com/bbeck/token-bucket/
  */
-public class RateLimit implements IRateLimit {
+public class RateLimit extends Base implements IRateLimit {
     private final int maxTokens;
-    private final int refillRate;
-    private final int timeUnit = 1000; // 1 second
+    private final int timeUnit = 100;
+    private int refillRate;
     private int tokens;
     private long lastRefillTimestamp;
 
     public RateLimit(int numTokens, int refillRate) {
         this.maxTokens = numTokens;
-        this.refillRate = refillRate;
+        this.refillRate = (int)((float)refillRate / ((float)1000 / (float)timeUnit));
+        if (this.refillRate == 0) {
+            this.refillRate = 1;
+            this.logger.Warn("Rate should be greater than VUser");
+        }
         this.tokens = numTokens; // Start with max capacity
         this.lastRefillTimestamp = System.currentTimeMillis();
     }
