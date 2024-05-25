@@ -4,7 +4,7 @@ import com.ncku_csie_union.resources.interfaces.ICommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "j8", mixinStandardHelpOptions = true, version = "1.0")
+@Command(name = "j8", mixinStandardHelpOptions = true, version = "1.0", description = "Web Pressure Test Tool")
 public class CommandLine implements Runnable, ICommandLine {
     // Handle Run Mode
     @Command(name = "run", description = "Run the test")
