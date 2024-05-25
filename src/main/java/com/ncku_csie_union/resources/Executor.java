@@ -14,17 +14,17 @@ public class Executor extends Base implements IExecutor {
     private String logPrefix;
     private Boolean stop;
     private RateLimit rateLimit;
-    public static Integer ExecutorCount = 0;
+    public static Integer ExecutorCount = 1;
     
 
     public Executor(Integer rate) {
-        this.logger.Log("[Executor] Constructor called");
-        this.rate = rate;
         this.name = "Executor-" + ExecutorCount++;
         this.logPrefix = "[" + name + "]";
+        this.logger.Log(logPrefix + "Constructor called");
+        this.rate = rate;
         this.stop = false;
-        this.rateLimit = new RateLimit(this.rate,this.rate);
-        this.logger.Log("[Executor] VUs: " + this.rate);
+        this.rateLimit = new RateLimit(this.rate*2,this.rate);
+        this.logger.Log(logPrefix + "Rate: " + rate);
     }
     public void Init() {
         this.logger.Log(logPrefix + "Init called");
@@ -48,6 +48,9 @@ public class Executor extends Base implements IExecutor {
                 this.rateLimit.GetToken();
                 executor.submit(mockTask);
             }
+        }
+        catch (Exception e) {
+            System.out.println("Exception: " + e);
         }
         finally {
             System.out.println("ExecutorService is shutdown");
