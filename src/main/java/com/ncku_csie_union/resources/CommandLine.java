@@ -9,15 +9,15 @@ public class CommandLine implements Runnable, ICommandLine {
     // Handle Run Mode
     @Command(name = "run", description = "Run the test")
     static class RunCommand implements Runnable {
-        @Option(names = {"--uri"}, required = false)
+        @Option(names = {"--uri"}, required = false, description = "URI to test.")
         private String uri;
-        @Option(names = {"--rate"}, defaultValue = "100")
+        @Option(names = {"--rate"}, defaultValue = "100", description = "Requests per second.")
         private int rate;
-        @Option(names = {"--duration"}, defaultValue = "1m")
+        @Option(names = {"--duration"}, defaultValue = "1m", description = "Duration of the test.")
         private String duration;
-        @Option(names = {"--vu"}, defaultValue = "500")
+        @Option(names = {"--vu"}, defaultValue = "500", description = "Number of virtual users.")
         private int vu;
-        @Option(names = "--verbose")
+        @Option(names = "--verbose", description = "Verbose output.")
         private boolean verbose;
         @Option(names = {"--config"}, defaultValue = "", description = "Path to configuration YAML file.")
         private String YAMLconfigPath;
@@ -30,7 +30,6 @@ public class CommandLine implements Runnable, ICommandLine {
                 else
                     UpdateConfig();
             } else { 
-                // If no YAML file is provided, use the command line arguments
                 LoadYAMLConfig();
             }
         }
