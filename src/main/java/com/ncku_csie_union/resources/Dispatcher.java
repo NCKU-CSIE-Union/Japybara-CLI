@@ -22,6 +22,9 @@ public class Dispatcher extends Base implements IDispatcher {
         executorService = Executors.newVirtualThreadPerTaskExecutor();
         for(int i = 1; i < vus; i++) {
             executors[i] = new Executor(rate, executorService);
+            // TODO: 進度條
+            // https://stackoverflow.com/questions/852665/command-line-progress-bar-in-java
+            // https://medium.com/javarevisited/how-to-display-progressbar-on-the-standard-console-using-java-18f01d52b30e
             total_rate += rate;
         }
         executors[0] = new Executor(config.rate- total_rate, executorService);
