@@ -9,7 +9,7 @@ public class CommandLine implements Runnable, ICommandLine {
     // Handle Run Mode
     @Command(name = "run", description = "Run the test")
     static class RunCommand implements Runnable {
-        @Option(names = {"--uri"}, required = false, description = "URI to test.")
+        @Option(names = {"--uri"}, defaultValue = "non-receive", required = false, description = "URI to test.")
         private String uri;
         @Option(names = {"--rate"}, defaultValue = "100", description = "Requests per second.")
         private int rate;
@@ -25,8 +25,10 @@ public class CommandLine implements Runnable, ICommandLine {
         @Override
         public void run() {
             if(YAMLconfigPath.isEmpty()){
-                if (uri == null || uri.isEmpty()) 
-                    System.err.println("Error: --uri must be provided when not using a config file.");
+                if (uri.equals("non-receive"))
+                    throw new RuntimeException("Exception: --uri must be provided when not using a config file.");
+                else if(rate <= 0)
+                    throw new RuntimeException("Exception: --rate can't be negative or zero.");
                 else
                     UpdateConfig();
             } else { 
