@@ -22,8 +22,18 @@ public class URIRequestTest {
         System.setErr(originalErr);
     }
     @Test
-    public void InvalidURITest(){
+    public void InvalidURITest1() {
         task.Init_uri("PeterEatShit.com.ja so n");
+        assertTrue(errContent.toString().contains("Error: Invalid URI."), "Didn't find the  invalid uri error message.");
+    }
+    @Test
+    public void InvalidURITest2() {
+        task.Init_uri("1ttp://PeterEatShit/jason/Henry");
+        assertTrue(errContent.toString().contains("Error: Invalid URI."), "Didn't find the  invalid uri error message.");
+    }
+    @Test
+    public void InvalidURITest3() {
+        task.Init_uri("http://[::1");
         assertTrue(errContent.toString().contains("Error: Invalid URI."), "Didn't find the  invalid uri error message.");
     }
 }
