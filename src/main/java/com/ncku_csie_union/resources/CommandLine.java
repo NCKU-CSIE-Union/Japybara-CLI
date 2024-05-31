@@ -9,29 +9,36 @@ public class CommandLine implements Runnable, ICommandLine {
     // Handle Run Mode
     @Command(name = "run", description = "Run the test")
     static class RunCommand implements Runnable {
-        @Option(names = {"--uri"}, defaultValue = "non-receive", required = false, description = "URI to test.")
-        private String uri;
+        @Option(names = {"--uri"}, defaultValue = "non-receive", description = "URI to test.")
+        static private String uri;
         @Option(names = {"--rate"}, defaultValue = "100", description = "Requests per second.")
-        private int rate;
+        static private int rate;
         @Option(names = {"--duration"}, defaultValue = "1m", description = "Duration of the test.")
-        private String duration;
+        static private String duration;
         @Option(names = {"--vu"}, defaultValue = "500", description = "Number of virtual users.")
-        private int vu;
+        static private int vu;
         @Option(names = "--verbose", description = "Verbose output.")
-        private boolean verbose;
+        static private boolean verbose;
         @Option(names = {"--config"}, defaultValue = "", description = "Path to configuration YAML file.")
-        private String YAMLconfigPath;
+        static private String YAMLconfigPath;
+
+        static public String get_uri() { return uri; }
+        static public int get_rate() { return rate; }
+        static public int get_vu() { return vu; }
 
         @Override
         public void run() {
-            if(YAMLconfigPath.isEmpty()){
-                if (uri.equals("non-receive"))
-                    throw new RuntimeException("Exception: --uri must be provided when not using a config file.");
-                else if(rate <= 0)
-                    throw new RuntimeException("Exception: --rate can't be negative or zero.");
-                else
-                    UpdateConfig();
-            } else { 
+            if(YAMLconfigPath.isEmpty()) {
+                if(rate <= 0) {
+                    System.out.println("Rate can't be zero or negative. Set to default value 100.");
+                    rate = 100;
+                }
+                if(vu > 10000 || vu < 1) {
+                    System.out.println("VU number should be between 10000 and 1. Set to default value 500.");
+                    vu = 500;
+                }
+                UpdateConfig();
+            } else {
                 LoadYAMLConfig();
             }
         }
