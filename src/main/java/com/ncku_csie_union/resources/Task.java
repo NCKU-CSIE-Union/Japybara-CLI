@@ -10,12 +10,13 @@ public class Task implements ITask {
     private long responseTime = -1;
     private int dataSize = -1;
     public Task() {
-        Config config = Config.GetInstance();
+        Init_uri(Config.GetInstance().uri);
+    }
+    public void Init_uri(String uri_string){
         try {
-            uri = new URI(config.uri);
+            uri = new URI(uri_string);
         } catch (Exception e) {
             System.err.println("Error: Invalid URI.");
-            // System.exit(1);
         }
     }
     public void Execute() {
