@@ -3,6 +3,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
 import com.ncku_csie_union.resources.interfaces.IDispatcher;
 
 public class Dispatcher extends Base implements IDispatcher {
@@ -10,6 +11,8 @@ public class Dispatcher extends Base implements IDispatcher {
     private Executor[] executors;
     private Integer vus;
     private ExecutorService executorService;
+    private ResultAggregator resultAggregator;
+    private ResultCollector[] resultCollectors;
 
     public Dispatcher() {
         logger.Debug(logPrefix + "Constructor called");
@@ -19,12 +22,17 @@ public class Dispatcher extends Base implements IDispatcher {
         Integer rate = config.rate / vus;
         logger.Debug(logPrefix + "vus: " + vus);
         logger.Debug(logPrefix + "Rate: " + rate);
+        resultAggregator = new ResultAggregator();
+        resultCollectors = new ResultCollector[vus];
+        for(int i = 0; i < vus; i++) {
+            resultCollectors[i] = new ResultCollector();
+        }
         executorService = Executors.newVirtualThreadPerTaskExecutor();
         for(int i = 1; i < vus; i++) {
-            executors[i] = new Executor(rate, executorService);
+            executors[i] = new Executor(rate, resultCollectors[i]);
             total_rate += rate;
         }
-        executors[0] = new Executor(config.rate- total_rate, executorService);
+        executors[0] = new Executor(config.rate- total_rate, resultCollectors[0]);
     }
     public void Execute() {
         logger.Debug(logPrefix + "Execute called");
@@ -38,7 +46,12 @@ public class Dispatcher extends Base implements IDispatcher {
         logger.Debug(logPrefix + "Stop called");
         for(int i = 0; i < vus; i++) {
             executors[i].Stop();
+            resultAggregator.RegisterResultCollector(resultCollectors[i]);
         }
         logger.Debug(logPrefix + "Stop end");
+    }
+    public void ShowReport(){
+        logger.Debug(logPrefix + "ShowReport called");
+        resultAggregator.ShowReport();
     }
 }
