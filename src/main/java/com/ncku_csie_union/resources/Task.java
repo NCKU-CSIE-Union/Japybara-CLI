@@ -4,19 +4,31 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.io.InputStream;
 
-public class Task implements ITask {
+
+public class Task extends Base implements Runnable {
     private URI uri = null;
     private HttpURLConnection connection = null;
     private long responseTime = -1;
     private int dataSize = -1;
+    private Config config = null;
+
+    @Override
+    public void run() {
+        this.Execute();
+    }
+
     public Task() {
         Init_uri(Config.GetInstance().uri);
     }
     public void Init_uri(String uri_string){
+        config = Config.GetInstance();
+        logger.Debug("Task constructor called");
         try {
             uri = new URI(uri_string);
         } catch (Exception e) {
             System.err.println("Error: Invalid URI.");
+            logger.Warn("Error: Invalid URI.");
+            // System.exit(1);
         }
     }
     public void Execute() {
@@ -39,24 +51,27 @@ public class Task implements ITask {
                     totalBytesRead += bytesRead;
                 this.dataSize = totalBytesRead;
             } else {
-                System.out.println("For uri: " + uri.toString() + " occurs some HTTP error.");
-                System.err.println("Error code: " + response_code);
+                logger.Warn("For uri: " + uri.toString() + " occurs some HTTP error.");
+                logger.Warn("Error code: " + response_code);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+            logger.Error( e.getMessage());
         } finally {
             if (connection != null) 
                 connection.disconnect();
-            System.out.println("Response Time: " + responseTime + "ms");
-            System.out.println("Data Size: " + dataSize + " bytes");
+            logger.Debug("Response Time: " + responseTime + "ms");
+            logger.Debug("Data Size: " + dataSize + " bytes");
             
         }
     }
     public void Stop() {
-        if (connection != null) 
+        if (connection != null){
             connection.disconnect();
-        else 
-            System.out.println("Error: Connection is null.");
+        }
+        else{
+            logger.Error("Error: Connection is null.");
+        }
     }
 }
