@@ -17,7 +17,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -74,32 +74,32 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <!-- annotationProcessorPaths requires maven-compiler-plugin version 3.5 or higher -->
-                <version>3.13.0</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                    <path>
-                        <groupId>info.picocli</groupId>
-                        <artifactId>picocli-codegen</artifactId>
-                        <version>4.7.6</version>
-                    </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <!-- annotationProcessorPaths requires maven-compiler-plugin version 3.5 or higher -->
-                <version>3.13.0</version>
-                <configuration>
-                    <compilerArgs>
-                    <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                &lt;!&ndash; annotationProcessorPaths requires maven-compiler-plugin version 3.5 or higher &ndash;&gt;-->
+<!--                <version>3.13.0</version>-->
+<!--                <configuration>-->
+<!--                    <annotationProcessorPaths>-->
+<!--                    <path>-->
+<!--                        <groupId>info.picocli</groupId>-->
+<!--                        <artifactId>picocli-codegen</artifactId>-->
+<!--                        <version>4.7.6</version>-->
+<!--                    </path>-->
+<!--                    </annotationProcessorPaths>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                &lt;!&ndash; annotationProcessorPaths requires maven-compiler-plugin version 3.5 or higher &ndash;&gt;-->
+<!--                <version>3.13.0</version>-->
+<!--                <configuration>-->
+<!--                    <compilerArgs>-->
+<!--                    <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>-->
+<!--                    </compilerArgs>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
