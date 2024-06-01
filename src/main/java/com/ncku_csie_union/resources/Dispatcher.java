@@ -46,6 +46,9 @@ public class Dispatcher extends Base implements IDispatcher {
         logger.Debug(logPrefix + "Stop called");
         for(int i = 0; i < vus; i++) {
             executors[i].Stop();
+        }
+        for (int i = 0; i < vus; i++) {
+            // executors[i].WaitTermination();
             resultAggregator.RegisterResultCollector(resultCollectors[i]);
         }
         logger.Debug(logPrefix + "Stop end");
