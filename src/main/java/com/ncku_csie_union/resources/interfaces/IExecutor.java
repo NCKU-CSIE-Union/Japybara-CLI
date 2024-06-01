@@ -4,4 +4,5 @@ public interface IExecutor {
     public void Init();
     public void Execute();
     public void Stop();
+    public void WaitTermination();
 }

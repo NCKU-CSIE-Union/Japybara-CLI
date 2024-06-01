@@ -16,25 +16,25 @@ public class ArrayStatistics<T extends Number & Comparable<T>> {
 
     public ArrayStatistics(List<T> initialData) {
         this.data = new ArrayList<>(initialData);
-        this.dirty = false;
+        this.dirty = true;
         sortData();
     }
 
     public void AddData(T value) {
         data.add(value);
-        this.dirty = false;
+        this.dirty = true;
     }
 
     public void AddData(List<T> values) {
         data.addAll(values);
-        this.dirty = false;
+        this.dirty = true;
     }
 
     private void sortData() {
-        if (!dirty) {
+        if (dirty) {
             Collections.sort(data);
             this.cache_average = GetAverage();
-            dirty = true;
+            dirty = false;
         }
     }
 
@@ -45,7 +45,8 @@ public class ArrayStatistics<T extends Number & Comparable<T>> {
         for (T num : data) {
             sum += num.doubleValue();
         }
-        return sum / data.size();
+        cache_average = sum / ((double)data.size());
+        return cache_average;
     }
 
     public T GetMin() {
