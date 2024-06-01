@@ -18,11 +18,15 @@ public class Task extends Base implements Runnable {
     }
 
     public Task() {
+        Init_uri(Config.GetInstance().uri);
+    }
+    public void Init_uri(String uri_string){
         config = Config.GetInstance();
         logger.Debug("Task constructor called");
         try {
-            uri = new URI(config.uri);
+            uri = new URI(uri_string);
         } catch (Exception e) {
+            System.err.println("Error: Invalid URI.");
             logger.Warn("Error: Invalid URI.");
             // System.exit(1);
         }
