@@ -1,20 +1,20 @@
 package com.ncku_csie_union.resources;
-import com.ncku_csie_union.resources.interfaces.ITask;
+import com.ncku_csie_union.resources.model.TaskRecord;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.concurrent.Callable;
 import java.io.InputStream;
 
 
-public class Task extends Base implements Runnable {
+public class Task extends Base implements Callable<TaskRecord> {
     private URI uri = null;
     private HttpURLConnection connection = null;
     private long responseTime = -1;
     private int dataSize = -1;
     private Config config = null;
 
-    @Override
-    public void run() {
-        this.Execute();
+    public TaskRecord call() throws Exception {
+        return this.Execute();
     }
 
     public Task() {
@@ -31,7 +31,7 @@ public class Task extends Base implements Runnable {
             // System.exit(1);
         }
     }
-    public void Execute() {
+    public TaskRecord Execute() {
         try {
             this.connection = (HttpURLConnection) uri.toURL().openConnection();
             this.connection.setRequestMethod("GET");
@@ -58,13 +58,15 @@ public class Task extends Base implements Runnable {
         } catch (Exception e) {
             // e.printStackTrace();
             logger.Error( e.getMessage());
+            return null;
         } finally {
             if (connection != null) 
                 connection.disconnect();
             logger.Debug("Response Time: " + responseTime + "ms");
             logger.Debug("Data Size: " + dataSize + " bytes");
-            
         }
+
+        return new TaskRecord(responseTime, dataSize);
     }
     public void Stop() {
         if (connection != null){
