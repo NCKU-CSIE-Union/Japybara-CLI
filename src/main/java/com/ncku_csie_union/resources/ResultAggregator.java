@@ -8,7 +8,7 @@ import com.ncku_csie_union.resources.interfaces.IResultAggregator;
 import com.ncku_csie_union.resources.interfaces.IResultCollector;
 import com.ncku_csie_union.resources.model.TaskRecord;
 
-class ResultAggregator implements IResultAggregator {
+class ResultAggregator extends Base implements IResultAggregator {
     private ArrayList<IResultCollector> collectors = new ArrayList<IResultCollector>();
     private ArrayStatistics<Long> durationStatistics = new ArrayStatistics<Long>();
     private ArrayStatistics<Long> dataReceivedStatistics = new ArrayStatistics<Long>();
@@ -39,7 +39,7 @@ class ResultAggregator implements IResultAggregator {
         final String PADDING = "  ";
         System.out.flush();
         System.out.println("\n");
-        System.out.println(PADDING + BOLD + "data_received" + RESET + GRAY + "........:" + RESET + " " + BOLD + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetMax()) + RESET + " " + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetAverage()) + "/s" + RESET);
+        System.out.println(PADDING + BOLD + "data_received" + RESET + GRAY + "........:" + RESET + " " + BOLD + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetTotal()) + RESET + " " + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetTotal() / this.config.GetDuration() * 1000) + "/s" + RESET);
         System.out.println(PADDING + BOLD + "duration" + RESET + GRAY + ".............:" + RESET + " " +
         "avg=" + CYAN + durationHumanReadable(durationStatistics.GetAverage()) + RESET + " " +
         "min=" + CYAN + durationHumanReadable(durationStatistics.GetMin()) + RESET + " " +
