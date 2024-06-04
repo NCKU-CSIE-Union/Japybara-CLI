@@ -14,6 +14,110 @@
 
 ### Latest Structure
 
+lock-free structure for aggregating results from multiple executors.
+
+```mermaid
+flowchart TB
+%% Nodes
+    CLI("CLI input")
+    Config("J8 Config")
+
+    subgraph Dispatcher["`**Dispatcher**`"]
+        subgraph ResultAggregator["`**ResultAggregator**`"]
+            DurationStatistics["Duration Statistics"]
+            DataReceivedStatistics["Data Received Statistics"]
+            DurationStatistics ~~~ DataReceivedStatistics
+        end
+    end
+    
+    %% Queue("Task Queue")
+    
+    subgraph OS["OS"]
+        SIGTERM
+        SIGKILL
+        SIGTERM ~~~ SIGKILL
+    end
+
+
+    subgraph Executors["`Executors depends on VUs`"]
+        subgraph E1
+            B1["Bucket"]
+            RC1["Result Collector"]
+            B1 ~~~ RC1
+        end
+        
+        subgraph E2
+            B2["Bucket"]
+            RC2["Result Collector"]
+            B2 ~~~ RC2
+        end
+        
+        subgraph E3
+            B3["Bucket"]
+            RC3["Result Collector"]
+            B3 ~~~ RC3
+        end
+        
+        subgraph Executor["`**Executor**`"]
+            B["`Token Bucket
+            ( for Rate Limit )`"]
+            RC["`Result Collector
+            ( ArrayList of TaskRecord )`"]
+            B ~~~ RC
+        end
+    end 
+    
+%% Executor Tasks 
+    subgraph Task1
+        direction TB
+        Request1["Request 1"]
+        WriteResult1["Write Result"]
+        Request1 -.-> WriteResult1
+    end
+    
+    subgraph Task2
+        direction TB
+        Request2["Request"]
+        WriteResult2["Write Result"]
+        Request2 -.-> WriteResult2
+    end
+
+    subgraph Task3
+        direction TB
+        Request3["Request 3"]
+        WriteResult3["Write Result"]
+        Request3 -.-> WriteResult3
+    end
+
+    subgraph Taskn
+        direction TB
+        Requestn["Request..n"]
+        WriteResultn["`Write Result
+        ( back to Result Collector )`"]
+        Requestn -.-> WriteResultn
+    end
+
+%% Connection
+    CLI --> Config -->Dispatcher
+    Dispatcher -. "`For graceful shutdown`" .-> OS
+    Dispatcher --> E1 & E2 & E3 & Executor
+%% Executor conn
+    E1 <--> Task1
+    E2 <--> Task2
+    E3 <--> Task3
+    Executor <--"`while get token from Bucket`"-->  Taskn
+%% Write Result
+    Task1 & Task2 & Task3 -..-> FinalResult["`**ResultAggregator**
+    collect all results from each **ResultCollector**`"]
+    Taskn -."`after finish load testing`".-> FinalResult
+    
+
+``` 
+
+### Second Version
+
+each executor has its own rate limit bucket.
+
 ```mermaid
 flowchart TD
 %% Nodes
@@ -110,6 +214,8 @@ flowchart TD
 ``` 
 
 ### Original Structure
+
+increase rate limit throughput by distributing executors using hash function.
 
 ```mermaid
 flowchart TD
