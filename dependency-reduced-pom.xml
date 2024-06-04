@@ -36,6 +36,8 @@
               <version>4.7.6</version>
             </path>
           </annotationProcessorPaths>
+          <source>21</source>
+          <target>21</target>
         </configuration>
       </plugin>
       <plugin>
@@ -53,7 +55,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -67,6 +69,26 @@
       <artifactId>picocli-codegen</artifactId>
       <version>4.7.6</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.8.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>opentest4j</artifactId>
+          <groupId>org.opentest4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit-platform-commons</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>
