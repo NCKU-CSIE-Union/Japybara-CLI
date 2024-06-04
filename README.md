@@ -4,26 +4,15 @@
 > A load testing CLI similar to [`k6`](https://k6.io/) but written in Java. <br>
 > (We like **Kapybara** and we are using Java, so we named it **Japybara**, and briefly **J8** CLI.)
 
-## Getting Started
+* [Japybara (J8) CLI](#japybara-j8-cli)
+    * [Project Structure](#project-structure)
+        * [Latest Structure](#latest-structure)
+        * [Original Structure](#original-structure)
+    * [UML Diagram](#uml-diagram)
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Project Structure
 
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-
-## Latest Structure
+### Latest Structure
 
 ```mermaid
 flowchart TD
@@ -120,7 +109,7 @@ flowchart TD
     their own tasks`"--> ShareMem
 ``` 
 
-## Original Structure
+### Original Structure
 
 ```mermaid
 flowchart TD
@@ -183,4 +172,197 @@ flowchart TD
     Executors --> Task2
     WriteResult1 --> ShareMem
     WriteResult2 --> ShareMem
+```
+
+## UML Diagram
+
+
+```mermaid
+classDiagram
+    %% interfaces
+    class IBase {
+        -Config config
+        -ILogger logger
+    }
+    class ILogger {
+        + void Log(String message)
+    }
+    class IExecutor {
+        +void Init()
+        +void Execute()
+        +void Stop()
+        +void WaitTermination()
+    }
+    class IRateLimit {
+        +void GetToken()
+        +boolean TryGetToken()
+    }
+    class IDispatcher {
+        +void Execute()
+        +void Stop()
+    }
+    class ICommandLine {
+        +void Parse(String[] args)
+    }
+    class IResultCollector {
+        +void AppendReport(TaskRecord record)
+        +ArrayList<TaskRecord> GetRecords()
+    }
+    class IResultAggregator {
+        +void RegisterResultCollector(IResultCollector collector)
+        +void RegisterResultCollector(ArrayList<IResultCollector> newCollectors)
+        +void ShowReport()
+    }
+    class Callable {
+        +TaskRecord call()
+    }
+    %% model classes 
+    class TaskRecord {
+        -long Duration
+        -long DataReceived
+        -long Timestamp
+        +TaskRecord(long duration, long dataReceived)
+    }
+    %% concrete classes
+    class Logger {
+        -Config config
+        -Logger instance
+        +Logger GetInstance()
+        +void Log(String message)
+        +void Error(String message)
+        +void Warn(String message)
+        +void Info(String message)
+        +void Debug(String message)
+        +void Trace(String message)
+    }
+    class Base {
+        -Config config
+        -Logger logger
+    }
+    class Config {
+        +Config GetInstance()
+        +long GetDuration()
+    }
+    class CommandLine {
+        -Config config
+        -Logger logger
+        -IExecutor executor
+        -IDispatcher dispatcher
+        -IResultAggregator resultAggregator
+        -IResultCollector resultCollector
+        -IRateLimit rateLimit
+        +void Parse(String[] args)
+        +void Run()
+    }
+    class Dispatcher {
+        -ITask task
+        -IRateLimit rateLimit
+        -Logger logger
+        -Config config
+        +void Execute()
+        +void Stop()
+    }
+    class Executor {
+        -IDispatcher dispatcher
+        -ITask task
+        -IRateLimit rateLimit
+        -IResultCollector resultCollector
+        -IResultAggregator resultAggregator
+        +void Init()
+        +void Execute()
+        +void Stop()
+        +void WaitTermination()
+    }
+    class ArrayStatistics~T~ {
+        -ArrayList<T> data
+        +ArrayStatistics()
+        +void Add(T)
+        +T GetMin()
+        +T GetMax()
+        +T GetMean()
+        +T GetMedian()
+        +T GetMode()
+        +T GetStandardDeviation()
+    }
+    class ResultCollector {
+        -ArrayList<TaskRecord> recordList
+        +void AppendReport(TaskRecord)
+        +ArrayList<TaskRecord> GetRecords()
+    }
+    class ResultAggregator {
+        -ArrayList<IResultCollector> collectors
+        -ArrayStatistics<Long> durationStatistics
+        -ArrayStatistics<Long> dataReceivedStatistics
+        +void RegisterResultCollector(IResultCollector)
+        +void RegisterResultCollector(ArrayList<IResultCollector>)
+        +void ShowReport()
+        -void printStatistics(ArrayStatistics<Long>)
+    }
+    class RateLimit {
+        -int maxTokens
+        -int refillRate
+        -int tokens
+        -long lastRefillTimestamp
+        +RateLimit(int, int)
+    }
+    class Task {
+        -URI uri
+        -HttpURLConnection connection
+        -long responseTime
+        -int dataSize
+        -Config config
+        +TaskRecord call()
+        +Task()
+        +void Init_uri(String uri_string)
+        +TaskRecord Execute()
+        +void Stop()
+    }
+    class TaskRecord {
+        -long Duration
+        -long DataReceived
+        -long Timestamp
+        +TaskRecord(long, long)
+    }
+    class Main {
+        +void main(String[] args)
+    }
+    
+    %% implements relationships
+    Logger ..|> ILogger : implements
+    Base ..|> IBase : implements
+    CommandLine ..|> ICommandLine : implements
+    Dispatcher ..|> IDispatcher : implements
+    Executor ..|> IExecutor : implements
+    RateLimit ..|> IRateLimit : implements
+    ResultCollector ..|> IResultCollector : implements
+    ResultAggregator ..|> IResultAggregator : implements
+    Callable ..|> Task : implements
+
+    %% associations
+    Base -- Logger : uses
+    Base -- Config : uses
+    Config -- Logger : uses
+
+    %% inheritance relationships
+    Base <|-- Task : extends
+    Base <|-- RateLimit : extends
+    Base <|-- Executor : extends
+    Base <|-- Dispatcher : extends
+
+    %% composition relationships
+    Dispatcher -- Executor : uses
+    Dispatcher -- ResultAggregator : uses
+    Executor -- Task : uses
+    Executor -- RateLimit : uses
+    Executor -- ResultCollector : uses
+    ResultAggregator -- ResultCollector : registers
+    ResultAggregator -- ArrayStatistics : uses
+    ResultCollector -- TaskRecord : uses
+    %% Main entry point
+    Main -- CommandLine : uses
+    Main -- Config : uses
+    Main -- Logger : uses
+    Main -- Dispatcher : uses
+
+    
 ```
