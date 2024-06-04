@@ -51,7 +51,7 @@ class ResultAggregator extends Base implements IResultAggregator {
 
     private String dataReceivedHumanReadable(double dataReceived) {
         if (dataReceived < 1024) {
-            return String.format("%d B", dataReceived);
+            return String.format("%.0f B", dataReceived);
         } else if (dataReceived < 1024 * 1024) {
             return String.format("%.2f KB", dataReceived / 1024.0);
         } else if (dataReceived < 1024 * 1024 * 1024) {
@@ -64,7 +64,7 @@ class ResultAggregator extends Base implements IResultAggregator {
     private String durationHumanReadable(double duration) {
         // ns , µs, ms, s
         if (duration < 1000) {
-            return String.format("%dns", duration);
+            return String.format("%.0fns", duration);
         } else if (duration < 1000 * 1000) {
             return String.format("%.2fµs", duration / 1000.0);
         } else if (duration < 1000 * 1000 * 1000) {
