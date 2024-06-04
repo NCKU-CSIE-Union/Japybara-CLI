@@ -84,4 +84,12 @@ public class ArrayStatistics<T extends Number & Comparable<T>> {
     public double GetP95() {
         return getPercentile(95);
     }
+    public T GetTotal() {
+        if (data.isEmpty()) return null;
+        double sum = 0;
+        for (T num : data) {
+            sum += num.doubleValue();
+        }
+        return (T) new Integer((int) sum);
+    }
 }
