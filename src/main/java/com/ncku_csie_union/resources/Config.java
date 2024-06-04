@@ -8,7 +8,7 @@ public class Config {
     public boolean help = false;
     public Integer rate = 100;
 
-    private static Config instance;
+    private static volatile Config instance;
 
     private Config() {
     }
