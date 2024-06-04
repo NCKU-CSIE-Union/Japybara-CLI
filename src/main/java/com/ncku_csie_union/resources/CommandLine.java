@@ -49,11 +49,13 @@ public class CommandLine implements Runnable, ICommandLine {
             config.duration = duration;
             config.vu = vu;
             config.verbose = verbose;
-            System.out.println("URI: " + config.uri);
-            System.out.println("Rate: " + config.rate);
-            System.out.println("Duration: " + config.duration);
-            System.out.println("Virtual Users: " + config.vu);
-            System.out.println("Verbose: " + config.verbose);
+            if(config.verbose){
+                System.out.println("URI: " + config.uri);
+                System.out.println("Rate: " + config.rate);
+                System.out.println("Duration: " + config.duration);
+                System.out.println("Virtual Users: " + config.vu);
+                System.out.println("Verbose: " + config.verbose);
+            }
         }
         private void LoadYAMLConfig(){
             // TODO : Load YAML file

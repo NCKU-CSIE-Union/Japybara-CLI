@@ -10,7 +10,7 @@ public class Task extends Base implements Callable<TaskRecord> {
     private URI uri = null;
     private HttpURLConnection connection = null;
     private long responseTime = -1;
-    private int dataSize = -1;
+    private long dataSize = -1;
     private Config config = null;
 
     public TaskRecord call() throws Exception {
@@ -36,17 +36,17 @@ public class Task extends Base implements Callable<TaskRecord> {
             this.connection = (HttpURLConnection) uri.toURL().openConnection();
             this.connection.setRequestMethod("GET");
 
-            long startTime = System.currentTimeMillis();
+            long startTime = System.nanoTime();
             int response_code = this.connection.getResponseCode();  // Triggers the request
-            long endTime = System.currentTimeMillis();
+            long endTime = System.nanoTime();
 
             this.responseTime = endTime - startTime;
 
             if(response_code == HttpURLConnection.HTTP_OK){
                 InputStream inputStream = connection.getInputStream();
                 byte[] data = new byte[1024];
-                int bytesRead = 0;
-                int totalBytesRead = 0;
+                long bytesRead = 0;
+                long totalBytesRead = 0;
                 while((bytesRead = inputStream.read(data, 0, data.length)) != -1)
                     totalBytesRead += bytesRead;
                 this.dataSize = totalBytesRead;
@@ -62,7 +62,7 @@ public class Task extends Base implements Callable<TaskRecord> {
         } finally {
             if (connection != null) 
                 connection.disconnect();
-            logger.Debug("Response Time: " + responseTime + "ms");
+            logger.Debug("Response Time: " + responseTime + " ns");
             logger.Debug("Data Size: " + dataSize + " bytes");
         }
 
