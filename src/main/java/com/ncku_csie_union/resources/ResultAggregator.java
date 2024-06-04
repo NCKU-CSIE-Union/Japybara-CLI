@@ -32,10 +32,46 @@ class ResultAggregator implements IResultAggregator {
     }
 
     public void ShowReport() {
-        System.out.println("========= Duration Statistics =========");
-        printStatistics(durationStatistics);
-        System.out.println("======= Data Received Statistics ======");
-        printStatistics(dataReceivedStatistics);
+        final String CYAN = "\033[0;36m";
+        final String GRAY = "\033[0;37m";
+        final String RESET = "\033[0m";
+        final String BOLD = "\033[1m";
+        final String PADDING = "  ";
+        System.out.flush();
+        System.out.println("\n");
+        System.out.println(PADDING + BOLD + "data_received" + RESET + GRAY + "........:" + RESET + " " + BOLD + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetMax()) + RESET + " " + CYAN + dataReceivedHumanReadable(dataReceivedStatistics.GetAverage()) + "/s" + RESET);
+        System.out.println(PADDING + BOLD + "duration" + RESET + GRAY + ".............:" + RESET + " " +
+        "avg=" + CYAN + durationHumanReadable(durationStatistics.GetAverage()) + RESET + " " +
+        "min=" + CYAN + durationHumanReadable(durationStatistics.GetMin()) + RESET + " " +
+        "med=" + CYAN + durationHumanReadable(durationStatistics.GetMedian()) + RESET + " " +
+        "max=" + CYAN + durationHumanReadable(durationStatistics.GetMax()) + RESET + " " +
+        "p(90)=" + CYAN + durationHumanReadable(durationStatistics.GetP90()) + RESET + " " +
+        "p(95)=" + CYAN + durationHumanReadable(durationStatistics.GetP95()) + RESET);
+    }
+
+    private String dataReceivedHumanReadable(double dataReceived) {
+        if (dataReceived < 1024) {
+            return String.format("%d B", dataReceived);
+        } else if (dataReceived < 1024 * 1024) {
+            return String.format("%.2f KB", dataReceived / 1024.0);
+        } else if (dataReceived < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", dataReceived / 1024.0 / 1024.0);
+        } else {
+            return String.format("%.2f GB", dataReceived / 1024.0 / 1024.0 / 1024.0);
+        }
+    }
+
+    private String durationHumanReadable(double duration) {
+        // ns , µs, ms, s
+        if (duration < 1000) {
+            return String.format("%dns", duration);
+        } else if (duration < 1000 * 1000) {
+            return String.format("%.2fµs", duration / 1000.0);
+        } else if (duration < 1000 * 1000 * 1000) {
+            return String.format("%.2fms", duration / 1000.0 / 1000.0);
+        } else {
+            return String.format("%.2fs", duration / 1000.0 / 1000.0 / 1000.0);
+        }
     }
 
     private void printStatistics(ArrayStatistics<Long> statistics) {

@@ -10,6 +10,7 @@ public class Logger implements ILogger {
     private static final String YELLOW = "\033[0;33m";
     private static final String BLUE = "\033[0;34m";
     private static final String GREEN = "\033[0;32m";
+    private static final String CYAN = "\033[0;36m";
     private static final String RESET = "\033[0m";
 
     public static synchronized Logger GetInstance() {
@@ -59,5 +60,66 @@ public class Logger implements ILogger {
     }
     public void Trace(String message, Throwable t) {
         System.out.println(message);
+    }
+    public void Capybara(){
+        // read `ascii.txt` and print it
+        try {
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader("ascii.txt"));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void Logo(){
+        // read `logo.txt` and print it
+        try {
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader("logo.txt"));
+            String line = null;
+            System.out.println(BLUE);
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+            System.out.println(RESET);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void ProgressBar(long totalMiliseconds){
+        // print progress bar
+        Thread.startVirtualThread(() -> {
+            long startTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = 0;
+            int progress = 0;
+            int barWidth = 50;
+            while (elapsedTime < totalMiliseconds) {
+                currentTime = System.currentTimeMillis();
+                elapsedTime = currentTime - startTime;
+                progress = (int) (barWidth * elapsedTime / totalMiliseconds);
+                System.out.print("\r[");
+                for (int i = 0; i < barWidth; i++) {
+                    if (i < progress) {
+                        System.out.print("=");
+                    } else if (i == progress) {
+                        System.out.print(">");
+                    } else {
+                        System.out.print(" ");
+                    }
+                }
+                System.out.print("] " + progress * 2 + "%");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println();
+            System.out.flush();
+        });
     }
 }

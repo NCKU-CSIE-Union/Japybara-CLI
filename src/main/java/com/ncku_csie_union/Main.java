@@ -14,6 +14,9 @@ public class Main {
 
         Config config = Config.GetInstance();
         Logger logger = Logger.GetInstance();
+        logger.Capybara();
+        logger.Logo();
+        logger.ProgressBar(config.GetDuration()-100);
         Dispatcher dispatcher = new Dispatcher();
         // handle ctrl+c signal
         Signal.handle(new Signal("INT"), signal -> {
